@@ -98,6 +98,22 @@ whem you click on Webpage of campus event:
 Registration of event by USN:
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d2ae396b-0320-4c8f-ad52-c36f0f2f1555" />
 
+Dropdown of all UNIVERSITIES:
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1e50f61c-fe89-4ec6-bb3b-6522211b4372" />
+
+
+Dropdown of all events happening in Event Platform:
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2794dad8-4606-4123-a370-376cf8f9c418" />
+
+
+Hackthon Event in CMU UNIVERSITY:
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/165f90a4-8ae3-4de6-9459-ba9cd0343840" />
+
+Techtalk in Massachusetts Institute of Technology:
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/d399b840-e816-4a36-842d-a6bd7cf89a26" />
+
+
+
 
 
 
