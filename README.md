@@ -27,6 +27,7 @@ c) API & Data Format:
  
  STRUCTURE OF CODE IN VS CODE:
  
+ 
 campus-event-platform/  <-- This is your main folder
 ├── frontend/
 │   └── index.html
@@ -35,7 +36,8 @@ campus-event-platform/  <-- This is your main folder
 ├── campus_events.db
 ├── requirements.txt
 └── test_api.py
-	
+
+ 
 2.Setup and Execution Commands
 Commands that was use to set up environment and run this application.
 
