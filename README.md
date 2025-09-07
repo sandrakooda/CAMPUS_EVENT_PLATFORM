@@ -24,6 +24,17 @@ c) API & Data Format:
 
 	RESTful API-> The backend will exposes a RESTful API for the frontend to be consume. This will decouples the client from the server, allowing them to be developed and scaled independently.
 	JSON (JavaScript Object Notation)-> This one of the frequently used standard data format which is used for exchanging information between the frontend and the backend API.
+ 
+ STRUCTURE OF CODE IN VS CODE:
+ 
+campus-event-platform/  <-- This is your main folder
+├── frontend/
+│   └── index.html
+├── venv/
+├── app.py              <-- The Python BACKEND. It must be here.
+├── campus_events.db
+├── requirements.txt
+└── test_api.py
 	
 2.Setup and Execution Commands
 Commands that was use to set up environment and run this application.
