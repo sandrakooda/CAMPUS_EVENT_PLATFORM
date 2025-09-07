@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Event Platform</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+        }
+        .hero {
+            background: linear-gradient(45deg, #0d6efd, #6f42c1);
+            padding: 4rem 0;
+            color: white;
+        }
+        .event-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,.05);
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,.1);
+        }
+        .event-card .card-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #f0f2f5;
+        }
+        .filter-section {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,.05);
+            margin-bottom: 2rem;
+        }
+        .modal-header {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="#">
+                <i class="bi bi-calendar-check-fill"></i> Event Platform
+            </a>
+            <div class="ms-auto d-flex align-items-center">
+                 <label for="collegeSelector" class="form-label me-2 mb-0 d-none d-sm-block">University:</label>
+                 <select id="collegeSelector" class="form-select w-auto" aria-label="Select College">
+                    <option value="MIT" selected>Massachusetts Institute of Technology</option>
+                    <option value="CMU">Carnegie Mellon University</option>
+                    <option value="STANFORD">Stanford University</option>
+                 </select>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero text-center">
+        <div class="container">
+            <h1 id="heroTitle" class="display-4 fw-bold">Discover Campus Events</h1>
+            <p id="heroSubtitle" class="lead">Explore workshops, talks, and fests at your university.</p>
+        </div>
+    </header>
+
+    <main class="container py-5">
+        
+        <section class="filter-section">
+            <div class="row g-3 align-items-center">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by event title...">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="input-group">
+                        <label class="input-group-text" for="typeFilter"><i class="bi bi-tags-fill"></i></label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="all" selected>All Event Types</option>
+                            <option value="workshop">Workshop</option>
+                            <option value="tech_talk">Tech Talk</option>
+                            <option value="hackathon">Hackathon</option>
+                            <option value="seminar">Seminar</option>
+                            <option value="fest">Fest</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <button id="resetButton" class="btn btn-outline-secondary w-100">Reset</button>
+                </div>
+            </div>
+        </section>
+
+        <div id="loadingSpinner" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Fetching the latest events...</p>
+        </div>
+        <div id="alertContainer"></div>
+
+        <div id="eventGrid" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            </div>
+    </main>
+
+    <footer class="bg-white text-center py-4 mt-auto border-top">
+        <div class="container">
+            <p class="mb-0 text-muted">&copy; 2025 Campus Event Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Event Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    </div>
+                <div class="modal-footer justify-content-between">
+                    <div class="flex-grow-1 me-3">
+                         <input type="text" class="form-control" id="studentIdInput" placeholder="Enter Your Student ID (e.g., MIT-12345)">
+                         <div id="registrationAlertContainer" class="mt-2"></div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="registerButton"><i class="bi bi-check2-circle"></i> Register Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // =================================================================================
+        // MOCK BACKEND - This simulates a server and database.
+        // In a real application, this data would come from an API.
+        // =================================================================================
+        const mockDatabase = {
+            colleges: {
+                MIT: {
+                    name: "Massachusetts Institute of Technology",
+                    events: [
+                        { id: 'MIT001', title: 'AI & The Future of Robotics', description: 'A deep dive into machine learning models controlling modern robotics.', start_datetime: '2025-10-15T14:00:00Z', end_datetime: '2025-10-15T16:00:00Z', location: 'Stata Center, Room 32-123', event_type: 'tech_talk', capacity: 100, registration_count: 85, avg_rating: 4.8 },
+                        { id: 'MIT002', title: 'Quantum Computing Workshop', description: 'Hands-on workshop covering the basics of quantum gates and algorithms.', start_datetime: '2025-11-05T09:00:00Z', end_datetime: '2025-11-05T17:00:00Z', location: 'Media Lab, E14', event_type: 'workshop', capacity: 30, registration_count: 30, avg_rating: 4.9 },
+                        { id: 'MIT003', title: 'Annual Fall Fest', description: 'Join us for a day of music, food, and fun activities across campus.', start_datetime: '2025-09-28T12:00:00Z', end_datetime: '2025-09-28T20:00:00Z', location: 'Killian Court', event_type: 'fest', capacity: 5000, registration_count: 1250, avg_rating: 4.5 }
+                    ]
+                },
+                CMU: {
+                    name: "Carnegie Mellon University",
+                    events: [
+                        { id: 'CMU001', title: 'Human-Computer Interaction Seminar', description: 'Explore the latest research in HCI with leading professors.', start_datetime: '2025-10-22T18:00:00Z', end_datetime: '2025-10-22T19:30:00Z', location: 'Newell-Simon Hall', event_type: 'seminar', capacity: 150, registration_count: 110, avg_rating: 4.7 },
+                        { id: 'CMU002', title: 'ScottyLabs Hackathon', description: 'A 24-hour coding marathon to build something amazing. Prizes for top projects!', start_datetime: '2025-11-10T17:00:00Z', end_datetime: '2025-11-11T17:00:00Z', location: 'Gates Hillman Complex', event_type: 'hackathon', capacity: 200, registration_count: 195, avg_rating: 4.6 }
+                    ]
+                },
+                STANFORD: {
+                    name: "Stanford University",
+                    events: [
+                        { id: 'STA001', title: 'Startup Pitch Night', description: 'Watch the brightest minds on campus pitch their business ideas to venture capitalists.', start_datetime: '2025-10-18T19:00:00Z', end_datetime: '2025-10-18T21:00:00Z', location: 'Jen-Hsun Huang Engineering Center', event_type: 'seminar', capacity: 250, registration_count: 248, avg_rating: 4.9 },
+                        { id: 'STA002', title: 'Advanced Python for Data Science', description: 'An intensive workshop for students looking to master Pandas, NumPy, and Scikit-learn.', start_datetime: '2025-11-15T10:00:00Z', end_datetime: '2025-11-15T16:00:00Z', location: 'Old Union, The Axe & Palm', event_type: 'workshop', capacity: 50, registration_count: 41, avg_rating: 4.8 }
+                    ]
+                }
+            },
+            registrations: {
+                // Example: 'MIT001': ['MIT-STUDENT-1', 'MIT-STUDENT-2']
+            }
+        };
+
+        const mockApi = {
+            fetchEvents: async (collegeId) => {
+                console.log(`Mock API: Fetching events for ${collegeId}`);
+                // Simulate network delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+                if (mockDatabase.colleges[collegeId]) {
+                    // Return a copy to prevent direct mutation of the "database"
+                    return JSON.parse(JSON.stringify(mockDatabase.colleges[collegeId].events));
+                }
+                throw new Error("College not found.");
+            },
+            registerForEvent: async (collegeId, eventId, studentId) => {
+                console.log(`Mock API: Registering ${studentId} for event ${eventId}`);
+                 await new Promise(resolve => setTimeout(resolve, 750));
+                
+                const event = mockDatabase.colleges[collegeId]?.events.find(e => e.id === eventId);
+                if (!event) {
+                    throw new Error("Event not found.");
+                }
+
+                if (event.registration_count >= event.capacity) {
+                    throw new Error("Registration failed: Event is full.");
+                }
+                
+                if (!mockDatabase.registrations[eventId]) {
+                    mockDatabase.registrations[eventId] = [];
+                }
+
+                if (mockDatabase.registrations[eventId].includes(studentId)) {
+                    throw new Error("You are already registered for this event.");
+                }
+
+                // Success
+                mockDatabase.registrations[eventId].push(studentId);
+                event.registration_count++;
+                return { message: `Successfully registered for "${event.title}"!` };
+            }
+        };
+
+        // =================================================================================
+        // APPLICATION LOGIC
+        // =================================================================================
+
+        // --- DOM ELEMENT REFERENCES ---
+        const eventGrid = document.getElementById('eventGrid');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const alertContainer = document.getElementById('alertContainer');
+        const searchInput = document.getElementById('searchInput');
+        const typeFilter = document.getElementById('typeFilter');
+        const resetButton = document.getElementById('resetButton');
+        const collegeSelector = document.getElementById('collegeSelector');
+        const heroTitle = document.getElementById('heroTitle');
+        const heroSubtitle = document.getElementById('heroSubtitle');
+        
+        // Modal elements
+        const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const registerButton = document.getElementById('registerButton');
+        const studentIdInput = document.getElementById('studentIdInput');
+        const registrationAlertContainer = document.getElementById('registrationAlertContainer');
+
+        // --- STATE MANAGEMENT ---
+        let allEvents = [];
+        let currentEvent = null; // To track the open event object
+
+        // --- UTILITY FUNCTIONS ---
+        const formatDate = (dateString) => {
+            if (!dateString) return 'Not available';
+            return new Date(dateString).toLocaleString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+        };
+
+        const showAlert = (message, type = 'danger', container = alertContainer) => {
+            const alertId = `alert-${Date.now()}`;
+            const alertHTML = `<div id="${alertId}" class="alert alert-${type} alert-dismissible fade show" role="alert">
+                                  ${message}
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                               </div>`;
+            container.innerHTML = alertHTML;
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    const alertElement = document.getElementById(alertId);
+                    if (alertElement) {
+                        bootstrap.Alert.getOrCreateInstance(alertElement).close();
+                    }
+                }, 4000);
+            }
+        };
+        
+        // --- EVENT HANDLERS ---
+        const handleRegistration = async () => {
+            const studentId = studentIdInput.value.trim();
+            const collegeId = collegeSelector.value;
+
+            if (!studentId) {
+                showAlert('Please enter your Student ID.', 'warning', registrationAlertContainer);
+                return;
+            }
+            if (!currentEvent) {
+                showAlert('Could not determine the event. Please close and try again.', 'danger', registrationAlertContainer);
+                return;
+            }
+
+            registerButton.disabled = true;
+            registerButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Registering...`;
+            registrationAlertContainer.innerHTML = ''; // Clear previous alerts
+
+            try {
+                const result = await mockApi.registerForEvent(collegeId, currentEvent.id, studentId);
+                eventModal.hide(); // Hide modal on success
+                showAlert(result.message, 'success'); // Show success message on the main page
+                fetchEvents(); // Refresh event list to show new registration count
+            } catch (error) {
+                showAlert(error.message, 'danger', registrationAlertContainer); // Show error inside the modal
+            } finally {
+                registerButton.disabled = false;
+                registerButton.innerHTML = `<i class="bi bi-check2-circle"></i> Register Now`;
+            }
+        };
+
+        // --- RENDERING FUNCTIONS ---
+        const createEventCardHTML = (event) => {
+            const eventTypeFormatted = (event.event_type || 'general').replace(/_/g, ' ');
+            const avgRating = event.avg_rating ? event.avg_rating.toFixed(1) : 'N/A';
+            const isFull = event.registration_count >= event.capacity;
+
+            return `
+                <div class="col">
+                    <div class="card h-100 event-card ${isFull ? 'opacity-75' : ''}" data-event-id="${event.id}" ${isFull ? '' : 'style="cursor: pointer;"'}>
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary-subtle text-primary-emphasis rounded-pill text-capitalize">${eventTypeFormatted}</span>
+                                <span class="text-warning fw-bold d-flex align-items-center"><i class="bi bi-star-fill me-1"></i> ${avgRating}</span>
+                            </div>
+                            <h5 class="card-title">${event.title}</h5>
+                            <p class="card-subtitle mb-3 text-muted"><i class="bi bi-calendar-event"></i> ${formatDate(event.start_datetime)}</p>
+                            <p class="card-text text-body-secondary small flex-grow-1">${event.description || 'No description available.'}</p>
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <span class="fw-semibold"><i class="bi bi-people-fill"></i> ${event.registration_count || 0} / ${event.capacity || '∞'}</span>
+                            ${isFull 
+                                ? `<span class="text-danger fw-bold">Full</span>` 
+                                : `<span class="text-primary fw-bold">View Details <i class="bi bi-arrow-right"></i></span>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        const renderEvents = (eventsToRender) => {
+            eventGrid.innerHTML = '';
+            if (eventsToRender.length === 0) {
+                showAlert('No events found matching your criteria. Try adjusting your filters.', 'info');
+            } else {
+                alertContainer.innerHTML = '';
+                eventsToRender.forEach(event => { eventGrid.innerHTML += createEventCardHTML(event); });
+            }
+        };
+
+        const renderModal = (event) => {
+            currentEvent = event;
+            studentIdInput.value = '';
+            registrationAlertContainer.innerHTML = '';
+            modalTitle.textContent = event.title;
+            
+            modalBody.innerHTML = `
+                <p class="lead">${event.description || ''}</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><strong><i class="bi bi-calendar-event me-2 text-primary"></i>Start Time</strong><span>${formatDate(event.start_datetime)}</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><strong><i class="bi bi-calendar-check me-2 text-primary"></i>End Time</strong><span>${formatDate(event.end_datetime)}</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><strong><i class="bi bi-geo-alt-fill me-2 text-primary"></i>Location</strong><span class="text-end">${event.location || 'To be announced'}</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><strong><i class="bi bi-tag-fill me-2 text-primary"></i>Type</strong><span class="text-capitalize">${(event.event_type || 'general').replace(/_/g, ' ')}</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><strong><i class="bi bi-people-fill me-2 text-primary"></i>Capacity</strong><span>${event.registration_count || 0} registered / ${event.capacity || 'Unlimited'}</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><strong><i class="bi bi-star-fill me-2 text-warning"></i>Average Rating</strong><span>${event.avg_rating ? `${event.avg_rating.toFixed(1)} / 5.0` : 'Not yet rated'}</span></li>
+                </ul>
+            `;
+
+            // Handle registration button state
+            const isFull = event.registration_count >= event.capacity;
+            registerButton.disabled = isFull;
+            studentIdInput.disabled = isFull;
+            registerButton.innerHTML = isFull ? 'Event is Full' : `<i class="bi bi-check2-circle"></i> Register Now`;
+            
+            eventModal.show();
+        };
+
+        // --- DATA FETCHING & FILTERING ---
+        const filterAndRender = () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedType = typeFilter.value;
+            let filteredEvents = allEvents;
+            
+            if (searchTerm) {
+                filteredEvents = filteredEvents.filter(event => event.title.toLowerCase().includes(searchTerm));
+            }
+            if (selectedType !== 'all') {
+                filteredEvents = filteredEvents.filter(event => event.event_type === selectedType);
+            }
+            
+            renderEvents(filteredEvents);
+        };
+
+        const fetchEvents = async () => {
+            const selectedCollegeId = collegeSelector.value;
+            loadingSpinner.classList.remove('d-none');
+            eventGrid.innerHTML = '';
+            // Don't clear main alert container, so registration success messages can persist
+            
+            // Update Hero Text
+            const collegeName = mockDatabase.colleges[selectedCollegeId]?.name || "Your University";
+            heroTitle.textContent = `Discover Events at ${selectedCollegeId}`;
+            heroSubtitle.textContent = `Explore everything happening at ${collegeName}.`;
+
+            try {
+                allEvents = await mockApi.fetchEvents(selectedCollegeId);
+                allEvents.sort((a, b) => new Date(a.start_datetime) - new Date(b.start_datetime)); // Sort by upcoming
+                filterAndRender();
+            } catch (error) {
+                console.error("Failed to fetch events:", error);
+                showAlert(`Could not load events. Please try again later. [${error.message}]`);
+            } finally {
+                loadingSpinner.classList.add('d-none');
+            }
+        };
+
+        // --- EVENT LISTENERS ---
+        registerButton.addEventListener('click', handleRegistration);
+        collegeSelector.addEventListener('change', fetchEvents);
+        searchInput.addEventListener('input', filterAndRender);
+        typeFilter.addEventListener('change', filterAndRender);
+
+        resetButton.addEventListener('click', () => {
+            searchInput.value = '';
+            typeFilter.value = 'all';
+            filterAndRender();
+        });
+
+        eventGrid.addEventListener('click', (e) => {
+            const card = e.target.closest('.event-card');
+            if (card) {
+                const eventId = card.dataset.eventId;
+                const event = allEvents.find(ev => ev.id === eventId);
+                const isFull = event && event.registration_count >= event.capacity;
+                if (event && !isFull) { 
+                    renderModal(event); 
+                }
+            }
+        });
+
+        // --- INITIALIZATION ---
+        fetchEvents();
+    });
+    </script>
+</body>
+</html>
