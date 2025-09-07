@@ -105,6 +105,10 @@ FOUTH command----->python app.py
 When we run python app.py we will get a url above like this:
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0bc23c30-1190-45c4-9fcf-cbb204319490" />
 
+VS CODE WILL ASK TO OPEN THE WEBPAGE IN EXTERNAL WEBSITE: GIVE OPEN
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e297802e-dcdc-4643-bb58-663b77c0811c" />
+
+
 whem you click on Webpage of campus event:
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/eaf25e74-e86b-49d2-8c24-598fc0e4ce10" />
 
